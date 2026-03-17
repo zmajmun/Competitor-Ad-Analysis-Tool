@@ -49,15 +49,14 @@ function toPlainText(product,analysis,generated){
   }
   if(generated){
     o+="\nGENERATED HOOKS\n"+"-".repeat(30)+"\n";
-    (generated.hooks||[]).forEach((h,i)=>{o+=(i+1)+". ["+h.type+"] "+h.text+"\n   → "+h.why_it_wins+"\n";});
+    (generated.hooks||[]).forEach((h,i)=>{o+=(i+1)+". ["+h.type+"] "+h.text+"\n   -> "+h.why_it_wins+"\n";});
     o+="\nAD CONCEPTS\n"+"-".repeat(30)+"\n";
     (generated.ad_concepts||[]).forEach((c,i)=>{o+="\nConcept "+(i+1)+": "+c.title+"\nFormat: "+c.format+" | Angle: "+c.angle+"\nHeadline: "+c.headline+"\nCopy: "+c.body_copy+"\nCTA: "+c.cta+"\nEdge: "+c.why_it_beats_competition+"\n";});
     o+="\nSTRATEGIC EDGE\n"+"-".repeat(30)+"\n"+generated.strategic_edge+"\n";
   }
   return o;
 }
-
-function Scanline(){return React.createElement('div',{style:{position:'absolute',inset:0,pointerEvents:'none',zIndex:0,background:'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px)',borderRadius:'inherit'}});}
+function Scanline(){return <div style={{position:'absolute',inset:0,pointerEvents:'none',zIndex:0,background:'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px)',borderRadius:'inherit'}}/>;}
 function TypewriterText({text,speed=10}){
   const[d,setD]=useState('');
   useEffect(()=>{setD('');let i=0;const iv=setInterval(()=>{if(i<text.length){setD(text.slice(0,++i));}else clearInterval(iv);},speed);return()=>clearInterval(iv);},[text]);
@@ -65,14 +64,14 @@ function TypewriterText({text,speed=10}){
 }
 function Toast({msg,onDone}){
   useEffect(()=>{const t=setTimeout(onDone,2400);return()=>clearTimeout(t);},[]);
-  return <div style={{position:'fixed',bottom:28,right:28,zIndex:9999,background:'#161616',border:'1px solid rgba(74,222,128,0.35)',borderRadius:10,padding:'12px 20px',color:'#4ade80',fontSize:13,fontFamily:"'DM Mono',monospace",boxShadow:'0 8px 32px rgba(0,0,0,0.6)',animation:'fadeIn .25s ease'}}>✓ {msg}</div>;
+  return <div style={{position:'fixed',bottom:28,right:28,zIndex:9999,background:'#161616',border:'1px solid rgba(74,222,128,0.35)',borderRadius:10,padding:'12px 20px',color:'#4ade80',fontSize:13,fontFamily:"'DM Mono',monospace",boxShadow:'0 8px 32px rgba(0,0,0,0.6)',animation:'fadeIn .25s ease'}}>{"checkmark"} {msg}</div>;
 }
-function hexToRgb(hex){const r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);return r?(parseInt(r[1],16)+","+parseInt(r[2],16)+","+parseInt(r[3],16)):'255,107,0';}
-function ScoreBar({label,value,color='#ff6b00'}){
-  return <div style={{marginBottom:10}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}><span style={{fontSize:10,color:'#777',letterSpacing:'0.1em',textTransform:'uppercase'}}>{label}</span><span style={{fontSize:11,color,fontWeight:600}}>{value}</span></div><div style={{height:3,background:'rgba(255,255,255,0.06)',borderRadius:2}}><div style={{height:'100%',width:value+"%",background:"linear-gradient(90deg,"+color+"88,"+color+")",borderRadius:2,transition:'width 1s ease'}}/></div></div>;
+function ScoreBar({label,value,color}){
+  color=color||'#ff6b00';
+  return <div style={{marginBottom:10}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}><span style={{fontSize:10,color:'#777',letterSpacing:'0.1em',textTransform:'uppercase'}}>{label}</span><span style={{fontSize:11,color:color,fontWeight:600}}>{value}</span></div><div style={{height:3,background:'rgba(255,255,255,0.06)',borderRadius:2}}><div style={{height:'100%',width:value+"%",background:"linear-gradient(90deg,"+color+"88,"+color+")",borderRadius:2,transition:'width 1s ease'}}/></div></div>;
 }
 function GradeCircle({grade}){
-  const col=GRADE_COLORS[grade]||'#888';
+  const col=(GRADE_COLORS[grade])||'#888';
   return <div style={{width:52,height:52,borderRadius:'50%',border:"2px solid "+col,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,background:col+"18"}}><span style={{fontSize:18,fontWeight:700,color:col}}>{grade}</span></div>;
 }
 
@@ -80,49 +79,52 @@ function AdMockup({concept}){
   const accent=concept.preview_accent||'#ff6b00';
   const fmt=concept.format;
   const cardBase={borderRadius:12,overflow:'hidden',border:'1px solid rgba(255,255,255,0.1)',fontFamily:"'DM Mono',monospace"};
-  if(fmt==='Carousel')return(
-    <div style={{...cardBase,background:'#0d0d0d',maxWidth:380}}>
+  if(fmt==='Carousel') return(
+    <div style={Object.assign({},cardBase,{background:'#0d0d0d',maxWidth:380})}>
       <div style={{display:'flex',gap:2}}>
-        {['main','2','3'].map((_,i)=>(<div key={i} style={{flex:1,height:160,background:i===0?'linear-gradient(135deg,#1a1a2e,#0d0d1a)':'#111',display:'flex',alignItems:'center',justifyContent:'center',borderRight:i<2?'1px solid rgba(255,255,255,0.05)':undefined}}>{i===0?(<div style={{padding:14,textAlign:'center'}}><div style={{fontSize:9,color:accent,letterSpacing:'0.15em',textTransform:'uppercase',marginBottom:8}}>SLIDE 1</div><div style={{fontSize:12,fontWeight:700,color:'#fff',lineHeight:1.4}}>{concept.headline}</div></div>):(<div style={{color:'#2a2a2a',fontSize:20}}>◈</div>)}</div>))}
+        {[0,1,2].map((i)=>(
+          <div key={i} style={{flex:1,height:160,background:i===0?'linear-gradient(135deg,#1a1a2e,#0d0d1a)':'#111',display:'flex',alignItems:'center',justifyContent:'center',borderRight:i<2?'1px solid rgba(255,255,255,0.05)':undefined}}>
+            {i===0?(<div style={{padding:14,textAlign:'center'}}><div style={{fontSize:9,color:accent,letterSpacing:'0.15em',textTransform:'uppercase',marginBottom:8}}>SLIDE 1</div><div style={{fontSize:12,fontWeight:700,color:'#fff',lineHeight:1.4}}>{concept.headline}</div></div>):(<div style={{color:'#2a2a2a',fontSize:20}}>o</div>)}
+          </div>
+        ))}
       </div>
-      <div style={{padding:'12px 16px',background:'#0d0d0d',borderTop:'1px solid rgba(255,255,255,0.06)'}}><div style={{fontSize:11,color:'#bbb',marginBottom:8,lineHeight:1.6}}>{concept.body_copy?.substring(0,90)}…</div><span style={{background:accent,color:'#fff',fontSize:11,fontWeight:700,padding:'5px 14px',borderRadius:4,display:'inline-block'}}>{concept.cta}</span></div>
+      <div style={{padding:'12px 16px',background:'#0d0d0d',borderTop:'1px solid rgba(255,255,255,0.06)'}}><div style={{fontSize:11,color:'#bbb',marginBottom:8,lineHeight:1.6}}>{(concept.body_copy||'').substring(0,90)}...</div><span style={{background:accent,color:'#fff',fontSize:11,fontWeight:700,padding:'5px 14px',borderRadius:4,display:'inline-block'}}>{concept.cta}</span></div>
     </div>
   );
-  if(fmt==='Video')return(
-    <div style={{...cardBase,background:'#0d0d0d',maxWidth:220}}>
+  if(fmt==='Video') return(
+    <div style={Object.assign({},cardBase,{background:'#0d0d0d',maxWidth:220})}>
       <div style={{height:340,background:'linear-gradient(175deg,#1a1a2e,#0a0a0a)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',position:'relative',padding:20}}>
         <div style={{position:'absolute',top:10,left:10,right:10,display:'flex',justifyContent:'space-between',alignItems:'center'}}><div style={{display:'flex',alignItems:'center',gap:6}}><div style={{width:22,height:22,borderRadius:'50%',background:accent}}/><span style={{fontSize:10,color:'#fff',fontWeight:600}}>Brand</span></div><div style={{fontSize:8,color:'rgba(255,255,255,0.5)',background:'rgba(0,0,0,0.5)',padding:'2px 6px',borderRadius:3}}>SPONSORED</div></div>
-        <div style={{width:44,height:44,borderRadius:'50%',background:'rgba(255,255,255,0.08)',border:'2px solid rgba(255,255,255,0.2)',display:'flex',alignItems:'center',justifyContent:'center',marginBottom:14}}><span style={{fontSize:18,color:'#fff',marginLeft:3}}>▶</span></div>
+        <div style={{width:44,height:44,borderRadius:'50%',background:'rgba(255,255,255,0.08)',border:'2px solid rgba(255,255,255,0.2)',display:'flex',alignItems:'center',justifyContent:'center',marginBottom:14}}><span style={{fontSize:18,color:'#fff',marginLeft:3}}>play</span></div>
         <div style={{fontSize:13,fontWeight:700,color:'#fff',textAlign:'center',lineHeight:1.4,marginBottom:8}}>{concept.headline}</div>
-        <div style={{fontSize:10,color:'rgba(255,255,255,0.5)',textAlign:'center',lineHeight:1.5}}>{concept.body_copy?.substring(0,60)}…</div>
+        <div style={{fontSize:10,color:'rgba(255,255,255,0.5)',textAlign:'center',lineHeight:1.5}}>{(concept.body_copy||'').substring(0,60)}...</div>
         <div style={{position:'absolute',bottom:12,left:12,right:12,background:accent,color:'#fff',fontSize:11,fontWeight:700,padding:'7px',borderRadius:6,textAlign:'center'}}>{concept.cta}</div>
       </div>
     </div>
   );
   return(
-    <div style={{...cardBase,background:'#0d0d0d',maxWidth:320}}>
+    <div style={Object.assign({},cardBase,{background:'#0d0d0d',maxWidth:320})}>
       <div style={{height:180,background:'linear-gradient(135deg,#1a1a2e,#0a0a14)',display:'flex',alignItems:'center',justifyContent:'center',padding:24,position:'relative'}}><div style={{position:'absolute',top:10,right:10,fontSize:8,color:'rgba(255,255,255,0.4)',background:'rgba(0,0,0,0.5)',padding:'2px 7px',borderRadius:3}}>SPONSORED</div><div style={{textAlign:'center'}}><div style={{fontSize:9,color:accent,letterSpacing:'0.15em',textTransform:'uppercase',marginBottom:10}}>{concept.angle}</div><div style={{fontSize:15,fontWeight:700,color:'#fff',lineHeight:1.35}}>{concept.headline}</div></div></div>
-      <div style={{padding:'12px 16px',background:'#0d0d0d',borderTop:'1px solid rgba(255,255,255,0.06)'}}><div style={{fontSize:11,color:'#bbb',marginBottom:10,lineHeight:1.6}}>{concept.body_copy?.substring(0,100)}…</div><div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}><span style={{fontSize:10,color:'#444'}}>yourbrand.com</span><span style={{background:accent,color:'#fff',fontSize:11,fontWeight:700,padding:'5px 14px',borderRadius:4}}>{concept.cta}</span></div></div>
+      <div style={{padding:'12px 16px',background:'#0d0d0d',borderTop:'1px solid rgba(255,255,255,0.06)'}}><div style={{fontSize:11,color:'#bbb',marginBottom:10,lineHeight:1.6}}>{(concept.body_copy||'').substring(0,100)}...</div><div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}><span style={{fontSize:10,color:'#444'}}>yourbrand.com</span><span style={{background:accent,color:'#fff',fontSize:11,fontWeight:700,padding:'5px 14px',borderRadius:4}}>{concept.cta}</span></div></div>
     </div>
   );
 }
-
 function HistoryPanel({history,onLoad,onDelete,onClose}){
   return(
     <div style={{position:'fixed',top:0,right:0,bottom:0,width:340,background:'#101010',borderLeft:'1px solid rgba(255,107,0,0.15)',zIndex:500,overflowY:'auto',fontFamily:"'DM Mono',monospace",animation:'slideIn .25s ease'}}>
-      <div style={{padding:24,borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',justifyContent:'space-between',alignItems:'center',position:'sticky',top:0,background:'#101010',zIndex:1}}><span style={{fontSize:11,letterSpacing:'0.2em',color:'#ff6b00',textTransform:'uppercase'}}>Session History</span><button onClick={onClose} style={{background:'none',border:'none',color:'#555',fontSize:20,cursor:'pointer',lineHeight:1}}>✕</button></div>
+      <div style={{padding:24,borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',justifyContent:'space-between',alignItems:'center',position:'sticky',top:0,background:'#101010',zIndex:1}}><span style={{fontSize:11,letterSpacing:'0.2em',color:'#ff6b00',textTransform:'uppercase'}}>Session History</span><button onClick={onClose} style={{background:'none',border:'none',color:'#555',fontSize:20,cursor:'pointer',lineHeight:1}}>x</button></div>
       <div style={{padding:'16px 20px'}}>
-        {history.length===0&&<p style={{color:'#444',fontSize:13,marginTop:8}}>No saved sessions yet. Run an analysis to auto-save.</p>}
-        {history.map(s=>(
+        {history.length===0&&<p style={{color:'#444',fontSize:13,marginTop:8}}>No saved sessions yet.</p>}
+        {history.map(function(s){return(
           <div key={s.id} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:8,padding:14,marginBottom:10}}>
             <div style={{fontSize:13,color:'#ddd',marginBottom:3,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{s.product}</div>
             <div style={{fontSize:10,color:'#444',marginBottom:10}}>{new Date(s.ts).toLocaleString()}</div>
             <div style={{display:'flex',gap:8}}>
-              <button onClick={()=>onLoad(s)} style={{flex:1,background:'rgba(255,107,0,0.12)',border:'1px solid rgba(255,107,0,0.25)',borderRadius:5,padding:'6px 0',color:'#ff9500',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>Load</button>
-              <button onClick={()=>onDelete(s.id)} style={{background:'rgba(248,113,113,0.08)',border:'1px solid rgba(248,113,113,0.18)',borderRadius:5,padding:'6px 12px',color:'#f87171',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>✕</button>
+              <button onClick={function(){onLoad(s);}} style={{flex:1,background:'rgba(255,107,0,0.12)',border:'1px solid rgba(255,107,0,0.25)',borderRadius:5,padding:'6px 0',color:'#ff9500',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>Load</button>
+              <button onClick={function(){onDelete(s.id);}} style={{background:'rgba(248,113,113,0.08)',border:'1px solid rgba(248,113,113,0.18)',borderRadius:5,padding:'6px 12px',color:'#f87171',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>X</button>
             </div>
           </div>
-        ))}
+        );})}
       </div>
     </div>
   );
@@ -132,7 +134,7 @@ function ShareModal({url,onClose,onCopy}){
     <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.85)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
       <div style={{background:'#111',border:'1px solid rgba(255,107,0,0.25)',borderRadius:14,padding:32,maxWidth:540,width:'100%',fontFamily:"'DM Mono',monospace"}}>
         <div style={{fontSize:11,letterSpacing:'0.2em',color:'#ff6b00',textTransform:'uppercase',marginBottom:14}}>Share This Analysis</div>
-        <p style={{fontSize:13,color:'#666',marginBottom:16,lineHeight:1.7}}>This URL encodes your full analysis. Anyone with it can load results instantly — no API key needed to view.</p>
+        <p style={{fontSize:13,color:'#666',marginBottom:16,lineHeight:1.7}}>This URL encodes your full analysis. Anyone with it can load results instantly.</p>
         <div style={{background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:8,padding:'12px 14px',marginBottom:16,wordBreak:'break-all',fontSize:11,color:'#aaa',lineHeight:1.7,maxHeight:100,overflowY:'auto'}}>{url}</div>
         <div style={{display:'flex',gap:10}}>
           <button onClick={onCopy} style={{flex:1,background:'rgba(255,107,0,0.18)',border:'1px solid rgba(255,107,0,0.35)',borderRadius:8,padding:'10px 0',color:'#ff9500',fontSize:13,fontFamily:'inherit',cursor:'pointer',fontWeight:600}}>Copy URL</button>
@@ -161,17 +163,17 @@ function MetaAdsIntel(){
   const[activeHook,setActiveHook]=useState(null);
   const[activeCon,setActiveCon]=useState(0);
   const[activeScore,setActiveScore]=useState(0);
-  const[history,setHistory]=useState(()=>{try{return JSON.parse(localStorage.getItem('mai_history')||'[]');}catch{return[];}});
+  const[history,setHistory]=useState(function(){try{return JSON.parse(localStorage.getItem('mai_history')||'[]');}catch(e){return[];}});
   const[showHistory,setShowHistory]=useState(false);
   const[toast,setToast]=useState(null);
   const[shareUrl,setShareUrl]=useState('');
   const[showShare,setShowShare]=useState(false);
   const resultRef=useRef(null);
-  const showToast=msg=>setToast(msg);
-  const saveKey=k=>{setApiKey(k);localStorage.setItem('mai_key',k);};
+  const showToast=function(msg){setToast(msg);};
+  const saveKey=function(k){setApiKey(k);localStorage.setItem('mai_key',k);};
 
-  useEffect(()=>{
-    const h=window.location.hash?.slice(1);
+  useEffect(function(){
+    const h=window.location.hash&&window.location.hash.slice(1);
     if(!h)return;
     const s=decompress(h);
     if(!s)return;
@@ -184,45 +186,46 @@ function MetaAdsIntel(){
     showToast('Loaded from shared link!');
   },[]);
 
-  const callClaude=async(msg,maxTok=4096)=>{
+  const callClaude=async function(msg,maxTok){
+    maxTok=maxTok||4096;
     if(!apiKey.trim())throw new Error('API key required');
     const r=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':apiKey.trim(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTok,system:SYSTEM_PROMPT,messages:[{role:'user',content:msg}]})
     });
-    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+r.status);}
+    if(!r.ok){const e=await r.json().catch(function(){return{};});throw new Error((e.error&&e.error.message)||'API error '+r.status);}
     const d=await r.json();
-    let t=d.content?.map(b=>b.text||'').join('').trim();
+    let t=d.content&&d.content.map(function(b){return b.text||'';}).join('').trim();
     t=t.replace(/^```(?:json)?\s*\n?/i,'').replace(/\n?```\s*$/i,'');
     return JSON.parse(t);
   };
 
-  const saveSession=useCallback((prod,anal,gen,sc)=>{
+  const saveSession=useCallback(function(prod,anal,gen,sc){
     const e={id:Date.now().toString(),ts:Date.now(),product:prod,analysis:anal,generated:gen,scores:sc||null};
-    setHistory(prev=>{const n=[e,...prev].slice(0,25);localStorage.setItem('mai_history',JSON.stringify(n));return n;});
+    setHistory(function(prev){const n=[e].concat(prev).slice(0,25);localStorage.setItem('mai_history',JSON.stringify(n));return n;});
   },[]);
 
-  const loadSession=s=>{
+  const loadSession=function(s){
     setProduct(s.product||'');setCompetitors('');setAdsSeen('');
     setAnalysis(s.analysis||null);setGenerated(s.generated||null);setScores(s.scores||null);
     setVariations(null);setActiveTab('analysis');setActiveCmp(0);setActiveCon(0);
     setPhase(s.generated?'generated':s.analysis?'results':'input');
     setShowHistory(false);showToast('Session loaded!');
   };
-  const deleteSession=id=>{setHistory(prev=>{const n=prev.filter(s=>s.id!==id);localStorage.setItem('mai_history',JSON.stringify(n));return n;});};
+  const deleteSession=function(id){setHistory(function(prev){const n=prev.filter(function(s){return s.id!==id;});localStorage.setItem('mai_history',JSON.stringify(n));return n;});};
 
-  const runAnalysis=async()=>{
+  const runAnalysis=async function(){
     if(!product.trim()||!apiKey.trim()){setError('Enter your API key and product niche.');return;}
     setError(null);setPhase('analyzing');
     try{
       const res=await callClaude('ANALYSIS MODE\nProduct/Niche: '+product+'\nCompetitors: '+(competitors||'Identify likely competitors')+'\nAds seen: '+(adsSeen||'None — infer from market knowledge')+'\nReturn JSON only.');
       setAnalysis(res);setPhase('results');setActiveTab('analysis');
-      setTimeout(()=>resultRef.current?.scrollIntoView({behavior:'smooth'}),100);
+      setTimeout(function(){resultRef.current&&resultRef.current.scrollIntoView({behavior:'smooth'});},100);
     }catch(e){setError(e.message||'Analysis failed.');setPhase('input');}
   };
 
-  const runGeneration=async()=>{
+  const runGeneration=async function(){
     setPhase('generating');setError(null);
     try{
       const res=await callClaude('GENERATION MODE\nProduct/Niche: '+product+'\nAnalysis: '+JSON.stringify(analysis)+'\nGenerate superior hooks and ad concepts. Return JSON only.');
@@ -231,80 +234,63 @@ function MetaAdsIntel(){
     }catch(e){setError(e.message||'Generation failed.');setPhase('results');}
   };
 
-  const runScoring=async()=>{
-    if(!generated?.ad_concepts)return;
+  const runScoring=async function(){
+    if(!generated||!generated.ad_concepts)return;
     setPhase('scoring');setError(null);
     try{
-      const items=generated.ad_concepts.map((c,i)=>({id:'concept_'+i,...c}));
-      const res=await callClaude('SCORING MODE\nProduct: '+product+'\nMarket: '+JSON.stringify({market_summary:analysis?.market_summary,winning_formula:analysis?.winning_formula,market_patterns:analysis?.market_patterns})+'\nConcepts: '+JSON.stringify(items)+'\nReturn JSON only.',2048);
+      const items=generated.ad_concepts.map(function(c,i){return Object.assign({id:'concept_'+i},c);});
+      const res=await callClaude('SCORING MODE\nProduct: '+product+'\nMarket: '+JSON.stringify({market_summary:analysis&&analysis.market_summary,winning_formula:analysis&&analysis.winning_formula,market_patterns:analysis&&analysis.market_patterns})+'\nConcepts: '+JSON.stringify(items)+'\nReturn JSON only.',2048);
       setScores(res);setPhase('generated');setActiveTab('scoring');
       saveSession(product,analysis,generated,res);
     }catch(e){setError(e.message||'Scoring failed.');setPhase('generated');}
   };
 
-  const runVariations=async idx=>{
-    const concept=generated?.ad_concepts?.[idx];
+  const runVariations=async function(idx){
+    const concept=generated&&generated.ad_concepts&&generated.ad_concepts[idx];
     if(!concept)return;
     setVarSource(idx);setPhase('variations_loading');setError(null);
     try{
-      const res=await callClaude('VARIATIONS MODE\nProduct: '+product+'\nOriginal concept: '+JSON.stringify(concept)+'\nMarket context: '+(analysis?.winning_formula||'')+'\nGenerate 4 A/B variation rewrites, each with different angle/tone. Return JSON only.',3000);
+      const res=await callClaude('VARIATIONS MODE\nProduct: '+product+'\nOriginal concept: '+JSON.stringify(concept)+'\nMarket context: '+(analysis&&analysis.winning_formula||'')+'\nGenerate 4 A/B variations with different angles. Return JSON only.',3000);
       setVariations(res);setPhase('generated');setActiveTab('variations');
     }catch(e){setError(e.message||'Variation failed.');setPhase('generated');}
   };
 
-  const doShare=()=>{
-    const s={product,competitors,analysis,generated,scores};
+  const doShare=function(){
+    const s={product:product,competitors:competitors,analysis:analysis,generated:generated,scores:scores};
     const url=location.origin+location.pathname+'#'+compress(s);
     setShareUrl(url);setShowShare(true);
   };
-  const doExportTxt=()=>{
+  const doExportTxt=function(){
     const txt=toPlainText(product,analysis,generated);
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));
     a.download='mai-'+product.slice(0,20).replace(/\s+/g,'-')+'-'+Date.now()+'.txt';
-    a.click();showToast('Exported as TXT!');
+    a.click();showToast('Exported!');
   };
-  const doExportJson=()=>{
+  const doExportJson=function(){
     const a=document.createElement('a');
-    a.href=URL.createObjectURL(new Blob([JSON.stringify({product,competitors,analysis,generated,scores,date:new Date().toISOString()},null,2)],{type:'application/json'}));
-    a.download='mai-'+Date.now()+'.json';a.click();showToast('Exported as JSON!');
+    a.href=URL.createObjectURL(new Blob([JSON.stringify({product:product,analysis:analysis,generated:generated,scores:scores,date:new Date().toISOString()},null,2)],{type:'application/json'}));
+    a.download='mai-'+Date.now()+'.json';a.click();showToast('JSON exported!');
   };
-  const doCopy=()=>{copyText(toPlainText(product,analysis,generated));showToast('Copied to clipboard!');};
-  const reset=()=>{
+  const doCopy=function(){copyText(toPlainText(product,analysis,generated));showToast('Copied!');};
+  const reset=function(){
     setPhase('input');setAnalysis(null);setGenerated(null);setScores(null);setVariations(null);setError(null);
     setProduct('');setCompetitors('');setAdsSeen('');setActiveTab('analysis');setActiveCmp(0);setActiveCon(0);setVarSource(null);
   };
   const isLoading=['analyzing','generating','scoring','variations_loading'].includes(phase);
-  const loadingMsg={analyzing:'Scanning the competitive landscape…',generating:'Building your winning ad strategy…',scoring:'Grading each concept against the market…',variations_loading:'Spinning up A/B variations…'}[phase]||'Working…';
   const hasResults=!!analysis;
   const hasGenerated=!!generated;
-
-  const inp=(ph,val,set,label,placeholder,rows)=>rows?(
-    <div style={{marginBottom:20}}>
-      <label style={{display:'block',fontSize:11,letterSpacing:'0.15em',color:'#ff6b00',textTransform:'uppercase',marginBottom:8}}>{label}</label>
-      <textarea value={val} onChange={e=>set(e.target.value)} placeholder={placeholder} disabled={ph==='analyzing'} rows={rows} style={{width:'100%',background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'12px 16px',color:'#e2e2e2',fontSize:14,fontFamily:'inherit',outline:'none',resize:'vertical',transition:'border-color .2s'}} onFocus={e=>e.target.style.borderColor='rgba(255,107,0,0.5)'} onBlur={e=>e.target.style.borderColor='rgba(255,255,255,0.1)'}/>
-    </div>
-  ):(
-    <div style={{marginBottom:20}}>
-      <label style={{display:'block',fontSize:11,letterSpacing:'0.15em',color:'#ff6b00',textTransform:'uppercase',marginBottom:8}}>{label}</label>
-      <input value={val} onChange={e=>set(e.target.value)} placeholder={placeholder} disabled={ph==='analyzing'} style={{width:'100%',background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'12px 16px',color:'#e2e2e2',fontSize:14,fontFamily:'inherit',outline:'none',transition:'border-color .2s'}} onFocus={e=>e.target.style.borderColor='rgba(255,107,0,0.5)'} onBlur={e=>e.target.style.borderColor='rgba(255,255,255,0.1)'}/>
-    </div>
-  );
-
-  const Btn=(props)=><button {...props} style={{background:props.disabled?'rgba(255,107,0,0.25)':'linear-gradient(135deg,#ff6b00,#ff9500)',border:'none',borderRadius:8,padding:'14px 28px',color:'#fff',fontSize:14,fontFamily:'inherit',letterSpacing:'0.08em',cursor:props.disabled?'not-allowed':'pointer',fontWeight:600,width:'100%',boxShadow:props.disabled?'none':'0 0 30px rgba(255,107,0,0.3)',transition:'all .2s',opacity:props.disabled?0.5:1,...props.style}}>{props.children}</button>;
-
-  const TabBtn=({id,label})=><button onClick={()=>setActiveTab(id)} style={{background:activeTab===id?'rgba(255,107,0,0.15)':'transparent',border:'none',borderBottom:activeTab===id?'2px solid #ff6b00':'2px solid transparent',padding:'10px 16px',color:activeTab===id?'#ff9500':'#555',fontSize:12,fontFamily:'inherit',letterSpacing:'0.08em',textTransform:'uppercase',cursor:'pointer',transition:'all .2s'}}>{label}</TabBtn>;
+  const tabStyle=function(id){return{background:activeTab===id?'rgba(255,107,0,0.15)':'transparent',border:'none',borderBottom:activeTab===id?'2px solid #ff6b00':'2px solid transparent',padding:'10px 16px',color:activeTab===id?'#ff9500':'#555',fontSize:12,fontFamily:'inherit',letterSpacing:'0.08em',textTransform:'uppercase',cursor:'pointer',transition:'all .2s'};};
 
   return(
     <div style={{minHeight:'100vh',background:'#0a0a0a',color:'#e2e2e2',fontFamily:"'DM Mono','Courier New',monospace",position:'relative',overflow:'hidden'}}>
       <div style={{position:'fixed',inset:0,zIndex:0,backgroundImage:'linear-gradient(rgba(255,107,0,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,107,0,0.03) 1px,transparent 1px)',backgroundSize:'40px 40px'}}/>
       <div style={{position:'fixed',top:'-20%',right:'-10%',width:600,height:600,background:'radial-gradient(circle,rgba(255,107,0,0.055) 0%,transparent 70%)',zIndex:0,pointerEvents:'none'}}/>
-      {showHistory&&<HistoryPanel history={history} onLoad={loadSession} onDelete={deleteSession} onClose={()=>setShowHistory(false)}/>}
-      {toast&&<Toast msg={toast} onDone={()=>setToast(null)}/>}
-      {showShare&&<ShareModal url={shareUrl} onClose={()=>setShowShare(false)} onCopy={()=>{copyText(shareUrl);showToast('URL copied!');}}/>}
+      {showHistory&&<HistoryPanel history={history} onLoad={loadSession} onDelete={deleteSession} onClose={function(){setShowHistory(false);}}/>}
+      {toast&&<Toast msg={toast} onDone={function(){setToast(null);}}/>}
+      {showShare&&<ShareModal url={shareUrl} onClose={function(){setShowShare(false);}} onCopy={function(){copyText(shareUrl);showToast('URL copied!');}}/>}
       <div style={{position:'relative',zIndex:1,maxWidth:960,margin:'0 auto',padding:'44px 22px 80px'}}>
 
-        {/* HEADER */}
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:16,marginBottom:40}}>
           <div>
             <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:13}}>
@@ -315,238 +301,131 @@ function MetaAdsIntel(){
               Find Your Competitors.<br/>
               <span style={{background:'linear-gradient(135deg,#ff6b00,#ff9500)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Outbuild Their Ads.</span>
             </h1>
-            <p style={{color:'#555',fontSize:13,lineHeight:1.6}}>Claude analyzes your entire competitive market — then builds ads designed to beat every one of them.</p>
+            <p style={{color:'#555',fontSize:13,lineHeight:1.6}}>Claude analyzes your competitive market — then builds ads designed to beat every one of them.</p>
           </div>
           <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'flex-start'}}>
-            <button onClick={()=>setShowHistory(true)} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.09)',borderRadius:8,padding:'8px 13px',color:'#777',fontSize:11,fontFamily:'inherit',cursor:'pointer',display:'flex',alignItems:'center',gap:6}}>
-              ◉ History {history.length>0&&<span style={{background:'rgba(255,107,0,0.25)',color:'#ff9500',borderRadius:8,padding:'1px 6px',fontSize:10}}>{history.length}</span>}
+            <button onClick={function(){setShowHistory(true);}} style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.09)',borderRadius:8,padding:'8px 13px',color:'#777',fontSize:11,fontFamily:'inherit',cursor:'pointer',display:'flex',alignItems:'center',gap:6}}>
+              History {history.length>0&&<span style={{background:'rgba(255,107,0,0.25)',color:'#ff9500',borderRadius:8,padding:'1px 6px',fontSize:10}}>{history.length}</span>}
             </button>
-            {hasResults&&<>
-              <button onClick={doShare} style={{background:'rgba(129,140,248,0.1)',border:'1px solid rgba(129,140,248,0.25)',borderRadius:8,padding:'8px 13px',color:'#818cf8',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>⬡ Share</button>
-              <button onClick={doCopy} style={{background:'rgba(74,222,128,0.07)',border:'1px solid rgba(74,222,128,0.18)',borderRadius:8,padding:'8px 13px',color:'#4ade80',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>⎘ Copy</button>
-              <button onClick={doExportTxt} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:8,padding:'8px 13px',color:'#666',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>↓ TXT</button>
-              <button onClick={doExportJson} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:8,padding:'8px 13px',color:'#666',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>↓ JSON</button>
-            </>}
+            {hasResults&&<button onClick={doShare} style={{background:'rgba(129,140,248,0.1)',border:'1px solid rgba(129,140,248,0.25)',borderRadius:8,padding:'8px 13px',color:'#818cf8',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>Share</button>}
+            {hasResults&&<button onClick={doCopy} style={{background:'rgba(74,222,128,0.07)',border:'1px solid rgba(74,222,128,0.18)',borderRadius:8,padding:'8px 13px',color:'#4ade80',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>Copy</button>}
+            {hasResults&&<button onClick={doExportTxt} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:8,padding:'8px 13px',color:'#666',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>TXT</button>}
+            {hasResults&&<button onClick={doExportJson} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:8,padding:'8px 13px',color:'#666',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>JSON</button>}
           </div>
         </div>
 
-        {/* INPUT PHASE */}
         {(phase==='input'||phase==='analyzing')&&(
           <div style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,107,0,0.2)',borderRadius:12,padding:32,position:'relative',overflow:'hidden'}}>
             <Scanline/>
             <div style={{position:'relative',zIndex:1}}>
               <label style={{display:'block',fontSize:11,letterSpacing:'0.15em',color:'#ff6b00',textTransform:'uppercase',marginBottom:8}}>Anthropic API Key *</label>
               <div style={{display:'flex',gap:8,marginBottom:20}}>
-                <input value={apiKey} onChange={e=>saveKey(e.target.value)} placeholder="sk-ant-..." type={showKey?'text':'password'} disabled={phase==='analyzing'} style={{flex:1,background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'12px 16px',color:'#e2e2e2',fontSize:14,fontFamily:'inherit',outline:'none',transition:'border-color .2s'}} onFocus={e=>e.target.style.borderColor='rgba(255,107,0,0.5)'} onBlur={e=>e.target.style.borderColor='rgba(255,255,255,0.1)'}/>
-                <button onClick={()=>setShowKey(!showKey)} style={{background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'8px 14px',color:'#888',fontSize:12,fontFamily:'inherit',cursor:'pointer'}}>{showKey?'Hide':'Show'}</button>
+                <input value={apiKey} onChange={function(e){saveKey(e.target.value);}} placeholder="sk-ant-..." type={showKey?'text':'password'} disabled={phase==='analyzing'} style={{flex:1,background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'12px 16px',color:'#e2e2e2',fontSize:14,fontFamily:'inherit',outline:'none',transition:'border-color .2s'}} onFocus={function(e){e.target.style.borderColor='rgba(255,107,0,0.5)';}} onBlur={function(e){e.target.style.borderColor='rgba(255,255,255,0.1)';}}/>
+                <button onClick={function(){setShowKey(!showKey);}} style={{background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'8px 14px',color:'#888',fontSize:12,fontFamily:'inherit',cursor:'pointer'}}>{showKey?'Hide':'Show'}</button>
               </div>
-              {inp(phase,product,setProduct,'Your Product / Niche *','e.g. TRT telehealth for men 35-55, hair growth supplements, keto coaching...',null)}
-              {inp(phase,competitors,setCompetitors,'Competitor Brands (optional)','e.g. Hims, Roman, Keeps — or leave blank to let Claude identify them',null)}
-              {inp(phase,adsSeen,setAdsSeen,'Ads You've Seen (optional — paste copy, describe creatives)','Paste competitor ad copy, describe videos you've seen, note hooks that keep showing up...',4)}
+              <label style={{display:'block',fontSize:11,letterSpacing:'0.15em',color:'#ff6b00',textTransform:'uppercase',marginBottom:8}}>Your Product / Niche *</label>
+              <input value={product} onChange={function(e){setProduct(e.target.value);}} placeholder="e.g. TRT telehealth for men 35-55, hair growth supplements, keto coaching..." disabled={phase==='analyzing'} style={{width:'100%',background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'12px 16px',color:'#e2e2e2',fontSize:14,fontFamily:'inherit',outline:'none',marginBottom:20,transition:'border-color .2s'}} onFocus={function(e){e.target.style.borderColor='rgba(255,107,0,0.5)';}} onBlur={function(e){e.target.style.borderColor='rgba(255,255,255,0.1)';}}/>
+              <label style={{display:'block',fontSize:11,letterSpacing:'0.15em',color:'#ff6b00',textTransform:'uppercase',marginBottom:8}}>Competitor Brands (optional)</label>
+              <input value={competitors} onChange={function(e){setCompetitors(e.target.value);}} placeholder="e.g. Hims, Roman, Keeps — or leave blank to let Claude identify them" disabled={phase==='analyzing'} style={{width:'100%',background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'12px 16px',color:'#e2e2e2',fontSize:14,fontFamily:'inherit',outline:'none',marginBottom:20,transition:'border-color .2s'}} onFocus={function(e){e.target.style.borderColor='rgba(255,107,0,0.5)';}} onBlur={function(e){e.target.style.borderColor='rgba(255,255,255,0.1)';}}/>
+              <label style={{display:'block',fontSize:11,letterSpacing:'0.15em',color:'#ff6b00',textTransform:'uppercase',marginBottom:8}}>Ads You Have Seen (optional)</label>
+              <textarea value={adsSeen} onChange={function(e){setAdsSeen(e.target.value);}} placeholder="Paste competitor ad copy, describe videos you've seen, note hooks that keep showing up..." disabled={phase==='analyzing'} rows={4} style={{width:'100%',background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'12px 16px',color:'#e2e2e2',fontSize:14,fontFamily:'inherit',outline:'none',marginBottom:24,resize:'vertical',transition:'border-color .2s'}} onFocus={function(e){e.target.style.borderColor='rgba(255,107,0,0.5)';}} onBlur={function(e){e.target.style.borderColor='rgba(255,255,255,0.1)';}}/>
               {error&&<div style={{color:'#f87171',fontSize:13,marginBottom:16,padding:'10px 14px',background:'rgba(248,113,113,0.1)',borderRadius:6,border:'1px solid rgba(248,113,113,0.2)'}}>{error}</div>}
-              <Btn onClick={runAnalysis} disabled={!product.trim()||!apiKey.trim()||phase==='analyzing'}>
-                {phase==='analyzing'?<span style={{display:'flex',alignItems:'center',justifyContent:'center',gap:10}}><span style={{animation:'spin 1s linear infinite',display:'inline-block'}}>◌</span>Claude is scanning the market…</span>:'→ Run Competitor Intelligence'}
-              </Btn>
+              <button onClick={runAnalysis} disabled={!product.trim()||!apiKey.trim()||phase==='analyzing'} style={{background:(!product.trim()||!apiKey.trim()||phase==='analyzing')?'rgba(255,107,0,0.25)':'linear-gradient(135deg,#ff6b00,#ff9500)',border:'none',borderRadius:8,padding:'14px 28px',color:'#fff',fontSize:14,fontFamily:'inherit',letterSpacing:'0.08em',cursor:(!product.trim()||!apiKey.trim()||phase==='analyzing')?'not-allowed':'pointer',fontWeight:600,width:'100%',boxShadow:(!product.trim()||!apiKey.trim()||phase==='analyzing')?'none':'0 0 30px rgba(255,107,0,0.3)',transition:'all .2s',opacity:(!product.trim()||!apiKey.trim())?0.5:1}}>
+                {phase==='analyzing'?<span style={{display:'flex',alignItems:'center',justifyContent:'center',gap:10}}><span style={{animation:'spin 1s linear infinite',display:'inline-block'}}>o</span>Claude is scanning the market...</span>:'Run Competitor Intelligence'}
+              </button>
             </div>
           </div>
         )}
 
-        {/* RESULTS */}
         {(phase==='results'||phase==='generating'||phase==='generated'||phase==='scoring'||phase==='variations_loading')&&analysis&&(
           <div ref={resultRef}>
-            {/* Market Summary */}
             <div style={{background:'rgba(255,107,0,0.05)',border:'1px solid rgba(255,107,0,0.3)',borderRadius:12,padding:24,marginBottom:24}}>
-              <div style={{fontSize:11,letterSpacing:'0.15em',color:'#ff6b00',textTransform:'uppercase',marginBottom:12}}>// Market Intelligence</div>
-              <p style={{margin:0,lineHeight:1.7,fontSize:15,color:'#d4d4d4'}}><TypewriterText text={analysis.market_summary}/></p>
+              <div style={{fontSize:11,letterSpacing:'0.15em',color:'#ff6b00',textTransform:'uppercase',marginBottom:12}}>Market Intelligence</div>
+              <p style={{margin:0,lineHeight:1.7,fontSize:15,color:'#d4d4d4'}}><TypewriterText text={analysis.market_summary||''}/></p>
               {analysis.winning_formula&&<div style={{marginTop:16,paddingTop:16,borderTop:'1px solid rgba(255,107,0,0.15)'}}><span style={{fontSize:11,color:'#ff6b00',letterSpacing:'0.1em',textTransform:'uppercase'}}>Winning Formula: </span><span style={{fontSize:13,color:'#999'}}>{analysis.winning_formula}</span></div>}
             </div>
 
-            {/* Tabs (when generated) */}
             {hasGenerated&&(
               <div style={{display:'flex',borderBottom:'1px solid rgba(255,255,255,0.07)',marginBottom:24,overflowX:'auto'}}>
-                <TabBtn id="analysis" label="Intelligence"/>
-                <TabBtn id="compare" label="Compare"/>
-                <TabBtn id="mockup" label="Mockups"/>
-                <TabBtn id="scoring" label={'Scores'+(scores?' ✓':'')}/>
-                <TabBtn id="variations" label={'Variations'+(variations?' ✓':'')}/>
+                <button onClick={function(){setActiveTab('analysis');}} style={tabStyle('analysis')}>Intelligence</button>
+                <button onClick={function(){setActiveTab('compare');}} style={tabStyle('compare')}>Compare</button>
+                <button onClick={function(){setActiveTab('mockup');}} style={tabStyle('mockup')}>Mockups</button>
+                <button onClick={function(){setActiveTab('scoring');}} style={tabStyle('scoring')}>{'Scores'+(scores?' checkmark':'')}</button>
+                <button onClick={function(){setActiveTab('variations');}} style={tabStyle('variations')}>{'Variations'+(variations?' checkmark':'')}</button>
               </div>
             )}
 
-            {/* ANALYSIS TAB */}
-            {(!hasGenerated||activeTab==='analysis')&&(
-              <div>
-                {analysis.competitors?.length>0&&(
-                  <div style={{marginBottom:24}}>
-                    <div style={{fontSize:11,letterSpacing:'0.15em',color:'#666',textTransform:'uppercase',marginBottom:16}}>// Competitor Breakdown</div>
-                    <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>
-                      {analysis.competitors.map((c,i)=>(<button key={i} onClick={()=>setActiveCmp(i)} style={{background:activeCmp===i?'rgba(255,107,0,0.2)':'rgba(255,255,255,0.04)',border:'1px solid '+(activeCmp===i?'rgba(255,107,0,0.6)':'rgba(255,255,255,0.1)'),borderRadius:6,padding:'7px 14px',color:activeCmp===i?'#ff9500':'#888',fontSize:13,fontFamily:'inherit',cursor:'pointer',transition:'all .2s'}}>{c.name}</button>))}
-                    </div>
-                    {(()=>{const c=analysis.competitors[activeCmp];if(!c)return null;return(
-                      <div style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.08)',borderRadius:12,padding:24,position:'relative',overflow:'hidden'}}>
-                        <Scanline/>
-                        <div style={{position:'relative',zIndex:1}}>
-                          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12,marginBottom:20}}>
-                            <div><h3 style={{margin:'0 0 4px',fontSize:20,color:'#fff'}}>{c.name}</h3><p style={{margin:0,fontSize:13,color:'#666'}}>{c.positioning}</p></div>
-                            <div style={{display:'flex',gap:8,alignItems:'center'}}>
-                              <span style={{fontSize:11,color:'#666',letterSpacing:'0.1em'}}>SPEND:</span>
-                              <span style={{fontSize:13,fontWeight:700,color:spendColors[c.spend_tier]||'#888',padding:'4px 10px',background:'rgba(0,0,0,0.3)',borderRadius:4,border:'1px solid '+(spendColors[c.spend_tier]||'#888')}}>{c.spend_tier}</span>
-                              {c.best_ad_format&&<span style={{fontSize:11,fontWeight:600,color:formatColors[c.best_ad_format]||'#888',padding:'4px 10px',background:'rgba(0,0,0,0.3)',borderRadius:4,border:'1px solid '+(formatColors[c.best_ad_format]||'#555')}}>{c.best_ad_format}</span>}
-                            </div>
-                          </div>
-                          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
-                            <div><div style={{fontSize:11,letterSpacing:'0.12em',color:'#ff6b00',marginBottom:10,textTransform:'uppercase'}}>Top Angles</div>{c.top_angles?.map((a,i)=>(<div key={i} style={{display:'flex',alignItems:'flex-start',gap:8,marginBottom:8}}><span style={{color:'#ff6b00',marginTop:2,flexShrink:0}}>▸</span><span style={{fontSize:13,color:'#ccc',lineHeight:1.5}}>{a}</span></div>))}</div>
-                            <div><div style={{fontSize:11,letterSpacing:'0.12em',color:'#818cf8',marginBottom:10,textTransform:'uppercase'}}>Hook Patterns</div>{c.hook_patterns?.map((h,i)=>(<div key={i} style={{display:'flex',alignItems:'flex-start',gap:8,marginBottom:8}}><span style={{color:'#818cf8',marginTop:2,flexShrink:0}}>▸</span><span style={{fontSize:13,color:'#ccc',lineHeight:1.5}}>{h}</span></div>))}</div>
-                          </div>
-                          {c.weakness&&<div style={{marginTop:16,padding:'12px 16px',background:'rgba(248,113,113,0.08)',borderRadius:8,border:'1px solid rgba(248,113,113,0.2)'}}><span style={{fontSize:11,color:'#f87171',letterSpacing:'0.1em',textTransform:'uppercase'}}>Gap: </span><span style={{fontSize:13,color:'#ccc'}}>{c.weakness}</span></div>}
-                        </div>
-                      </div>
-                    );})()}
-                  </div>
-                )}
-                {analysis.market_patterns&&(
-                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:24}}>
-                    {[{label:'Dominant Hooks',items:analysis.market_patterns.dominant_hooks,color:'#4ade80'},{label:'Winning Angles',items:analysis.market_patterns.winning_angles,color:'#818cf8'},{label:'Overused / Dying',items:analysis.market_patterns.overused_angles,color:'#f87171'},{label:'Market Gaps',items:analysis.market_patterns.content_gaps,color:'#facc15'}].map(({label,items,color})=>items?.length>0&&(
-                      <div key={label} style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:10,padding:18}}>
-                        <div style={{fontSize:11,letterSpacing:'0.12em',color,textTransform:'uppercase',marginBottom:12}}>{label}</div>
-                        {items.map((item,i)=>(<div key={i} style={{display:'flex',gap:8,marginBottom:6}}><span style={{color,flexShrink:0}}>·</span><span style={{fontSize:13,color:'#bbb',lineHeight:1.5}}>{item}</span></div>))}
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {hasGenerated&&generated?.strategic_edge&&(
-                  <div style={{background:'linear-gradient(135deg,rgba(255,107,0,0.1),rgba(255,149,0,0.05))',border:'1px solid rgba(255,107,0,0.4)',borderRadius:12,padding:'20px 24px',marginBottom:24}}>
-                    <div style={{fontSize:11,letterSpacing:'0.15em',color:'#ff6b00',textTransform:'uppercase',marginBottom:10}}>// Your Competitive Edge</div>
-                    <p style={{margin:0,fontSize:15,color:'#e2e2e2',lineHeight:1.6}}>{generated.strategic_edge}</p>
-                  </div>
-                )}
-                {hasGenerated&&generated?.hooks?.length>0&&(
-                  <div style={{marginBottom:24}}>
-                    <div style={{fontSize:11,letterSpacing:'0.15em',color:'#666',textTransform:'uppercase',marginBottom:16}}>// Generated Hooks ({generated.hooks.length})</div>
-                    <div style={{display:'flex',flexDirection:'column',gap:10}}>
-                      {generated.hooks.map((h,i)=>(
-                        <div key={i} onClick={()=>setActiveHook(activeHook===i?null:i)} style={{background:'rgba(255,255,255,0.03)',border:'1px solid '+(activeHook===i?'rgba(255,107,0,0.4)':'rgba(255,255,255,0.08)'),borderRadius:10,padding:'16px 20px',cursor:'pointer',transition:'all .2s'}}>
-                          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:12}}>
-                            <div style={{flex:1}}><span style={{fontSize:10,letterSpacing:'0.12em',color:hookTypeColors[h.type]||'#888',textTransform:'uppercase',marginRight:10}}>[{h.type}]</span>{h.score&&<span style={{fontSize:10,color:'#4ade80',marginRight:10}}>{h.score}/100</span>}<span style={{fontSize:14,color:'#e2e2e2',lineHeight:1.5}}>{h.text}</span></div>
-                            <span style={{color:'#555',fontSize:16,flexShrink:0}}>{activeHook===i?'↑':'↓'}</span>
-                          </div>
-                          {activeHook===i&&h.why_it_wins&&<div style={{marginTop:12,paddingTop:12,borderTop:'1px solid rgba(255,255,255,0.06)',fontSize:13,color:'#888',lineHeight:1.6}}><span style={{color:'#4ade80',fontSize:11,letterSpacing:'0.1em',textTransform:'uppercase'}}>Why it wins: </span>{h.why_it_wins}</div>}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {hasGenerated&&generated?.ad_concepts?.length>0&&(
-                  <div style={{marginBottom:32}}>
-                    <div style={{fontSize:11,letterSpacing:'0.15em',color:'#666',textTransform:'uppercase',marginBottom:16}}>// Ad Concepts ({generated.ad_concepts.length})</div>
-                    <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>
-                      {generated.ad_concepts.map((c,i)=>(<button key={i} onClick={()=>setActiveCon(i)} style={{background:activeCon===i?'rgba(129,140,248,0.2)':'rgba(255,255,255,0.04)',border:'1px solid '+(activeCon===i?'rgba(129,140,248,0.6)':'rgba(255,255,255,0.1)'),borderRadius:6,padding:'7px 14px',color:activeCon===i?'#818cf8':'#888',fontSize:12,fontFamily:'inherit',cursor:'pointer',transition:'all .2s'}}>{c.title}</button>))}
-                    </div>
-                    {(()=>{const c=generated.ad_concepts[activeCon];if(!c)return null;return(
-                      <div style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(129,140,248,0.25)',borderRadius:12,padding:28,position:'relative',overflow:'hidden'}}>
-                        <Scanline/>
-                        <div style={{position:'relative',zIndex:1}}>
-                          <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
-                            <span style={{fontSize:11,color:'#818cf8',padding:'4px 10px',background:'rgba(129,140,248,0.1)',borderRadius:4,border:'1px solid rgba(129,140,248,0.25)'}}>{c.format}</span>
-                            <span style={{fontSize:11,color:'#67e8f9',padding:'4px 10px',background:'rgba(103,232,249,0.08)',borderRadius:4,border:'1px solid rgba(103,232,249,0.2)'}}>{c.angle}</span>
-                            {c.score&&<span style={{fontSize:11,color:'#4ade80',padding:'4px 10px',background:'rgba(74,222,128,0.08)',borderRadius:4,border:'1px solid rgba(74,222,128,0.2)'}}>{c.score}/100</span>}
-                          </div>
-                          <h4 style={{margin:'0 0 12px',fontSize:18,color:'#fff',lineHeight:1.3}}>{c.headline}</h4>
-                          <p style={{margin:'0 0 20px',fontSize:14,color:'#bbb',lineHeight:1.8,whiteSpace:'pre-wrap'}}>{c.body_copy}</p>
-                          <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}>
-                            <div style={{padding:'10px 16px',background:'rgba(255,107,0,0.15)',borderRadius:6,border:'1px solid rgba(255,107,0,0.3)'}}><span style={{fontSize:11,color:'#ff6b00',letterSpacing:'0.1em',textTransform:'uppercase'}}>CTA: </span><span style={{fontSize:13,color:'#e2e2e2'}}>{c.cta}</span></div>
-                            <button onClick={()=>runVariations(activeCon)} style={{background:'rgba(250,204,21,0.1)',border:'1px solid rgba(250,204,21,0.25)',borderRadius:6,padding:'10px 16px',color:'#facc15',fontSize:11,fontFamily:'inherit',cursor:'pointer'}}>⊕ A/B Variations</button>
-                          </div>
-                          {c.why_it_beats_competition&&<div style={{padding:'12px 16px',background:'rgba(74,222,128,0.06)',borderRadius:8,border:'1px solid rgba(74,222,128,0.2)'}}><span style={{fontSize:11,color:'#4ade80',letterSpacing:'0.1em',textTransform:'uppercase'}}>Edge: </span><span style={{fontSize:13,color:'#ccc'}}>{c.why_it_beats_competition}</span></div>}
-                        </div>
-                      </div>
-                    );})()}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* COMPARE TAB */}
             {hasGenerated&&activeTab==='compare'&&(
               <div>
-                <div style={{fontSize:11,letterSpacing:'0.15em',color:'#666',textTransform:'uppercase',marginBottom:20}}>// Side-by-Side: Competitors vs Your Concepts</div>
+                <div style={{fontSize:11,letterSpacing:'0.15em',color:'#666',textTransform:'uppercase',marginBottom:20}}>Side-by-Side: Competitors vs Your Concepts</div>
                 <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
                   <div>
-                    <div style={{fontSize:11,color:'#f87171',letterSpacing:'0.12em',textTransform:'uppercase',marginBottom:12,padding:'8px 12px',background:'rgba(248,113,113,0.08)',borderRadius:6}}>🔴 Competitors</div>
-                    {analysis.competitors?.map((c,i)=>(
+                    <div style={{fontSize:11,color:'#f87171',letterSpacing:'0.12em',textTransform:'uppercase',marginBottom:12,padding:'8px 12px',background:'rgba(248,113,113,0.08)',borderRadius:6}}>Competitors</div>
+                    {(analysis.competitors||[]).map(function(c,i){return(
                       <div key={i} style={{background:'rgba(248,113,113,0.04)',border:'1px solid rgba(248,113,113,0.12)',borderRadius:10,padding:16,marginBottom:12}}>
-                        <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
-                          <span style={{fontSize:14,fontWeight:600,color:'#fff'}}>{c.name}</span>
-                          <span style={{fontSize:11,color:spendColors[c.spend_tier]||'#888'}}>{c.spend_tier}</span>
-                        </div>
+                        <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}><span style={{fontSize:14,fontWeight:600,color:'#fff'}}>{c.name}</span><span style={{fontSize:11,color:(spendColors[c.spend_tier])||'#888'}}>{c.spend_tier}</span></div>
                         <div style={{fontSize:12,color:'#888',marginBottom:8}}>{c.positioning}</div>
-                        <div style={{fontSize:11,color:'#f87171',marginBottom:4}}>Top angle: {c.top_angles?.[0]}</div>
+                        <div style={{fontSize:11,color:'#f87171',marginBottom:4}}>Top angle: {c.top_angles&&c.top_angles[0]}</div>
                         <div style={{fontSize:11,color:'rgba(248,113,113,0.6)'}}>Weakness: {c.weakness}</div>
                       </div>
-                    ))}
+                    );})}
                   </div>
                   <div>
-                    <div style={{fontSize:11,color:'#4ade80',letterSpacing:'0.12em',textTransform:'uppercase',marginBottom:12,padding:'8px 12px',background:'rgba(74,222,128,0.08)',borderRadius:6}}>🟢 Your Concepts</div>
-                    {generated.ad_concepts?.map((c,i)=>(
+                    <div style={{fontSize:11,color:'#4ade80',letterSpacing:'0.12em',textTransform:'uppercase',marginBottom:12,padding:'8px 12px',background:'rgba(74,222,128,0.08)',borderRadius:6}}>Your Concepts</div>
+                    {generated&&(generated.ad_concepts||[]).map(function(c,i){return(
                       <div key={i} style={{background:'rgba(74,222,128,0.04)',border:'1px solid rgba(74,222,128,0.12)',borderRadius:10,padding:16,marginBottom:12}}>
-                        <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
-                          <span style={{fontSize:14,fontWeight:600,color:'#fff'}}>{c.title}</span>
-                          <span style={{fontSize:11,color:formatColors[c.format]||'#888'}}>{c.format}</span>
-                        </div>
+                        <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}><span style={{fontSize:14,fontWeight:600,color:'#fff'}}>{c.title}</span><span style={{fontSize:11,color:(formatColors[c.format])||'#888'}}>{c.format}</span></div>
                         <div style={{fontSize:12,color:'#888',marginBottom:8}}>{c.angle}</div>
                         <div style={{fontSize:11,color:'#4ade80',marginBottom:4}}>Hook: {c.headline}</div>
-                        <div style={{fontSize:11,color:'rgba(74,222,128,0.6)'}}>Edge: {c.why_it_beats_competition?.substring(0,80)}…</div>
+                        <div style={{fontSize:11,color:'rgba(74,222,128,0.6)'}}>Edge: {(c.why_it_beats_competition||'').substring(0,80)}...</div>
                       </div>
-                    ))}
+                    );})}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* MOCKUP TAB */}
-            {hasGenerated&&activeTab==='mockup'&&(
+            {hasGenerated&&activeTab==='mockup'&&generated&&(
               <div>
-                <div style={{fontSize:11,letterSpacing:'0.15em',color:'#666',textTransform:'uppercase',marginBottom:20}}>// Ad Mockup Previews</div>
+                <div style={{fontSize:11,letterSpacing:'0.15em',color:'#666',textTransform:'uppercase',marginBottom:20}}>Ad Mockup Previews</div>
                 <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
-                  {generated.ad_concepts?.map((c,i)=>(<button key={i} onClick={()=>setActiveCon(i)} style={{background:activeCon===i?'rgba(129,140,248,0.2)':'rgba(255,255,255,0.04)',border:'1px solid '+(activeCon===i?'rgba(129,140,248,0.6)':'rgba(255,255,255,0.1)'),borderRadius:6,padding:'7px 14px',color:activeCon===i?'#818cf8':'#888',fontSize:12,fontFamily:'inherit',cursor:'pointer'}}>{c.title}</button>))}
+                  {(generated.ad_concepts||[]).map(function(c,i){return <button key={i} onClick={function(){setActiveCon(i);}} style={{background:activeCon===i?'rgba(129,140,248,0.2)':'rgba(255,255,255,0.04)',border:'1px solid '+(activeCon===i?'rgba(129,140,248,0.6)':'rgba(255,255,255,0.1)'),borderRadius:6,padding:'7px 14px',color:activeCon===i?'#818cf8':'#888',fontSize:12,fontFamily:'inherit',cursor:'pointer'}}>{c.title}</button>;})}
                 </div>
-                {generated.ad_concepts?.[activeCon]&&(
+                {generated.ad_concepts&&generated.ad_concepts[activeCon]&&(
                   <div style={{display:'flex',gap:32,alignItems:'flex-start',flexWrap:'wrap'}}>
                     <AdMockup concept={generated.ad_concepts[activeCon]}/>
                     <div style={{flex:1,minWidth:240}}>
                       <div style={{fontSize:11,color:'#ff6b00',letterSpacing:'0.12em',textTransform:'uppercase',marginBottom:12}}>Concept Details</div>
-                      <div style={{marginBottom:12}}><span style={{fontSize:11,color:'#666',textTransform:'uppercase',letterSpacing:'0.1em'}}>Format: </span><span style={{fontSize:13,color:formatColors[generated.ad_concepts[activeCon].format]||'#ccc'}}>{generated.ad_concepts[activeCon].format}</span></div>
-                      <div style={{marginBottom:12}}><span style={{fontSize:11,color:'#666',textTransform:'uppercase',letterSpacing:'0.1em'}}>Angle: </span><span style={{fontSize:13,color:'#ccc'}}>{generated.ad_concepts[activeCon].angle}</span></div>
-                      <div style={{marginBottom:12}}><span style={{fontSize:11,color:'#666',textTransform:'uppercase',letterSpacing:'0.1em'}}>Headline: </span><span style={{fontSize:13,color:'#fff',fontWeight:600}}>{generated.ad_concepts[activeCon].headline}</span></div>
-                      <div style={{marginBottom:12}}><span style={{fontSize:11,color:'#666',textTransform:'uppercase',letterSpacing:'0.1em'}}>CTA: </span><span style={{fontSize:13,color:'#ff9500'}}>{generated.ad_concepts[activeCon].cta}</span></div>
+                      <div style={{marginBottom:10}}><span style={{fontSize:11,color:'#666',textTransform:'uppercase'}}>Format: </span><span style={{fontSize:13,color:(formatColors[generated.ad_concepts[activeCon].format])||'#ccc'}}>{generated.ad_concepts[activeCon].format}</span></div>
+                      <div style={{marginBottom:10}}><span style={{fontSize:11,color:'#666',textTransform:'uppercase'}}>Headline: </span><span style={{fontSize:13,color:'#fff',fontWeight:600}}>{generated.ad_concepts[activeCon].headline}</span></div>
+                      <div style={{marginBottom:10}}><span style={{fontSize:11,color:'#666',textTransform:'uppercase'}}>CTA: </span><span style={{fontSize:13,color:'#ff9500'}}>{generated.ad_concepts[activeCon].cta}</span></div>
                       <div style={{fontSize:13,color:'#bbb',lineHeight:1.7,marginBottom:16}}>{generated.ad_concepts[activeCon].body_copy}</div>
-                      <button onClick={()=>runVariations(activeCon)} style={{background:'rgba(250,204,21,0.1)',border:'1px solid rgba(250,204,21,0.25)',borderRadius:6,padding:'10px 16px',color:'#facc15',fontSize:11,fontFamily:'inherit',cursor:'pointer',width:'100%'}}>⊕ Generate A/B Variations</button>
+                      <button onClick={function(){runVariations(activeCon);}} style={{background:'rgba(250,204,21,0.1)',border:'1px solid rgba(250,204,21,0.25)',borderRadius:6,padding:'10px 16px',color:'#facc15',fontSize:11,fontFamily:'inherit',cursor:'pointer',width:'100%'}}>Generate A/B Variations</button>
                     </div>
                   </div>
                 )}
               </div>
             )}
 
-            {/* SCORING TAB */}
             {hasGenerated&&activeTab==='scoring'&&(
               <div>
-                <div style={{fontSize:11,letterSpacing:'0.15em',color:'#666',textTransform:'uppercase',marginBottom:20}}>// Ad Concept Scoring</div>
+                <div style={{fontSize:11,letterSpacing:'0.15em',color:'#666',textTransform:'uppercase',marginBottom:20}}>Ad Concept Scoring</div>
                 {!scores&&phase!=='scoring'&&(
                   <div style={{textAlign:'center',padding:40,background:'rgba(255,255,255,0.02)',borderRadius:12,border:'1px solid rgba(255,255,255,0.07)'}}>
                     <p style={{color:'#666',fontSize:14,marginBottom:20}}>Have Claude grade each ad concept against the competitive landscape.</p>
-                    <button onClick={runScoring} style={{background:'linear-gradient(135deg,#ff6b00,#ff9500)',border:'none',borderRadius:8,padding:'14px 32px',color:'#fff',fontSize:14,fontFamily:'inherit',cursor:'pointer',fontWeight:600,boxShadow:'0 0 30px rgba(255,107,0,0.3)'}}>→ Score All Concepts</button>
+                    <button onClick={runScoring} style={{background:'linear-gradient(135deg,#ff6b00,#ff9500)',border:'none',borderRadius:8,padding:'14px 32px',color:'#fff',fontSize:14,fontFamily:'inherit',cursor:'pointer',fontWeight:600,boxShadow:'0 0 30px rgba(255,107,0,0.3)'}}>Score All Concepts</button>
                   </div>
                 )}
-                {phase==='scoring'&&<div style={{textAlign:'center',padding:32,background:'rgba(255,107,0,0.05)',borderRadius:12,border:'1px solid rgba(255,107,0,0.2)'}}><div style={{fontSize:24,marginBottom:12,animation:'spin 1s linear infinite',display:'inline-block'}}>◌</div><p style={{color:'#ff9500',fontSize:14,margin:0}}>Grading your concepts…</p></div>}
-                {scores&&(
+                {phase==='scoring'&&<div style={{textAlign:'center',padding:32,background:'rgba(255,107,0,0.05)',borderRadius:12,border:'1px solid rgba(255,107,0,0.2)'}}><div style={{fontSize:24,marginBottom:12,animation:'spin 1s linear infinite',display:'inline-block'}}>o</div><p style={{color:'#ff9500',fontSize:14,margin:0}}>Grading your concepts...</p></div>}
+                {scores&&scores.scores&&(
                   <div>
                     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:16,marginBottom:24}}>
-                      {scores.scores?.map((s,i)=>(
-                        <div key={i} onClick={()=>setActiveScore(i)} style={{background:activeScore===i?'rgba(255,255,255,0.05)':'rgba(255,255,255,0.02)',border:'1px solid '+(activeScore===i?'rgba(255,107,0,0.3)':'rgba(255,255,255,0.07)'),borderRadius:10,padding:20,cursor:'pointer',transition:'all .2s'}}>
+                      {scores.scores.map(function(s,i){return(
+                        <div key={i} onClick={function(){setActiveScore(i);}} style={{background:activeScore===i?'rgba(255,255,255,0.05)':'rgba(255,255,255,0.02)',border:'1px solid '+(activeScore===i?'rgba(255,107,0,0.3)':'rgba(255,255,255,0.07)'),borderRadius:10,padding:20,cursor:'pointer',transition:'all .2s'}}>
                           <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:16}}>
                             <GradeCircle grade={s.grade}/>
                             <div>
-                              <div style={{fontSize:13,color:'#fff',fontWeight:600,marginBottom:3}}>{generated.ad_concepts?.[i]?.title||s.id}</div>
+                              <div style={{fontSize:13,color:'#fff',fontWeight:600,marginBottom:3}}>{(generated&&generated.ad_concepts&&generated.ad_concepts[i]&&generated.ad_concepts[i].title)||s.id}</div>
                               <div style={{fontSize:12,color:'#666'}}>{s.score}/100</div>
                             </div>
                           </div>
@@ -557,11 +436,11 @@ function MetaAdsIntel(){
                               <ScoreBar label="Emotional Pull" value={s.breakdown.emotional_pull} color="#f9a8d4"/>
                               <ScoreBar label="Differentiation" value={s.breakdown.differentiation} color="#4ade80"/>
                               <ScoreBar label="CTA Strength" value={s.breakdown.cta_strength} color="#facc15"/>
-                              <div style={{marginTop:12,padding:'10px 14px',background:'rgba(255,255,255,0.03)',borderRadius:6}}><div style={{fontSize:11,color:'#888',marginBottom:4}}>{s.verdict}</div><div style={{fontSize:11,color:'#ff6b00'}}>↑ {s.top_fix}</div></div>
+                              <div style={{marginTop:12,padding:'10px 14px',background:'rgba(255,255,255,0.03)',borderRadius:6}}><div style={{fontSize:11,color:'#888',marginBottom:4}}>{s.verdict}</div><div style={{fontSize:11,color:'#ff6b00'}}>{s.top_fix}</div></div>
                             </div>
                           )}
                         </div>
-                      ))}
+                      );})}
                     </div>
                     {scores.coaching&&<div style={{background:'rgba(129,140,248,0.06)',border:'1px solid rgba(129,140,248,0.2)',borderRadius:10,padding:'16px 20px'}}><div style={{fontSize:11,letterSpacing:'0.12em',color:'#818cf8',textTransform:'uppercase',marginBottom:8}}>Strategic Coaching</div><p style={{fontSize:13,color:'#ccc',lineHeight:1.7,margin:0}}>{scores.coaching}</p></div>}
                   </div>
@@ -569,23 +448,21 @@ function MetaAdsIntel(){
               </div>
             )}
 
-            {/* VARIATIONS TAB */}
             {hasGenerated&&activeTab==='variations'&&(
               <div>
-                <div style={{fontSize:11,letterSpacing:'0.15em',color:'#666',textTransform:'uppercase',marginBottom:20}}>// A/B Variations{varSource!==null?' — Based on: '+generated.ad_concepts?.[varSource]?.title:''}</div>
+                <div style={{fontSize:11,letterSpacing:'0.15em',color:'#666',textTransform:'uppercase',marginBottom:20}}>A/B Variations{varSource!==null&&generated&&generated.ad_concepts&&generated.ad_concepts[varSource]?' — '+generated.ad_concepts[varSource].title:''}</div>
                 {!variations&&phase!=='variations_loading'&&(
                   <div style={{textAlign:'center',padding:40,background:'rgba(255,255,255,0.02)',borderRadius:12,border:'1px solid rgba(255,255,255,0.07)'}}>
-                    <p style={{color:'#666',fontSize:14,marginBottom:8}}>Select a concept from the Intelligence tab and click "A/B Variations" to generate rewrites.</p>
-                    <p style={{color:'#444',fontSize:12}}>Or pick one below:</p>
+                    <p style={{color:'#666',fontSize:14,marginBottom:8}}>Select a concept and click "A/B Variations" to generate rewrites.</p>
                     <div style={{display:'flex',gap:8,justifyContent:'center',marginTop:16,flexWrap:'wrap'}}>
-                      {generated.ad_concepts?.map((c,i)=>(<button key={i} onClick={()=>runVariations(i)} style={{background:'rgba(250,204,21,0.1)',border:'1px solid rgba(250,204,21,0.25)',borderRadius:6,padding:'8px 14px',color:'#facc15',fontSize:12,fontFamily:'inherit',cursor:'pointer'}}>{c.title}</button>))}
+                      {generated&&(generated.ad_concepts||[]).map(function(c,i){return <button key={i} onClick={function(){runVariations(i);}} style={{background:'rgba(250,204,21,0.1)',border:'1px solid rgba(250,204,21,0.25)',borderRadius:6,padding:'8px 14px',color:'#facc15',fontSize:12,fontFamily:'inherit',cursor:'pointer'}}>{c.title}</button>;})}
                     </div>
                   </div>
                 )}
-                {phase==='variations_loading'&&<div style={{textAlign:'center',padding:32,background:'rgba(255,107,0,0.05)',borderRadius:12,border:'1px solid rgba(255,107,0,0.2)'}}><div style={{fontSize:24,marginBottom:12,animation:'spin 1s linear infinite',display:'inline-block'}}>◌</div><p style={{color:'#ff9500',fontSize:14,margin:0}}>Generating variations…</p></div>}
-                {variations?.variations&&(
+                {phase==='variations_loading'&&<div style={{textAlign:'center',padding:32,background:'rgba(255,107,0,0.05)',borderRadius:12,border:'1px solid rgba(255,107,0,0.2)'}}><div style={{fontSize:24,marginBottom:12,animation:'spin 1s linear infinite',display:'inline-block'}}>o</div><p style={{color:'#ff9500',fontSize:14,margin:0}}>Generating variations...</p></div>}
+                {variations&&variations.variations&&(
                   <div style={{display:'flex',flexDirection:'column',gap:16}}>
-                    {variations.variations.map((v,i)=>(
+                    {variations.variations.map(function(v,i){return(
                       <div key={i} style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(250,204,21,0.15)',borderRadius:12,padding:24}}>
                         <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:16,flexWrap:'wrap',gap:8}}>
                           <div style={{fontSize:13,fontWeight:600,color:'#facc15'}}>{v.label}</div>
@@ -596,30 +473,24 @@ function MetaAdsIntel(){
                         <p style={{fontSize:13,color:'#bbb',lineHeight:1.7,margin:'0 0 14px'}}>{v.body_copy}</p>
                         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}}>
                           <span style={{background:'rgba(255,107,0,0.15)',border:'1px solid rgba(255,107,0,0.3)',borderRadius:5,padding:'5px 12px',fontSize:12,color:'#ff9500'}}>{v.cta}</span>
-                          {v.key_difference&&<span style={{fontSize:11,color:'#666'}}>↳ {v.key_difference}</span>}
+                          {v.key_difference&&<span style={{fontSize:11,color:'#666'}}>{v.key_difference}</span>}
                         </div>
                       </div>
-                    ))}
-                    <button onClick={()=>runVariations(varSource)} style={{background:'rgba(250,204,21,0.08)',border:'1px solid rgba(250,204,21,0.2)',borderRadius:8,padding:'12px',color:'#facc15',fontSize:12,fontFamily:'inherit',cursor:'pointer'}}>↺ Regenerate Variations</button>
+                    );})}
+                    <button onClick={function(){runVariations(varSource);}} style={{background:'rgba(250,204,21,0.08)',border:'1px solid rgba(250,204,21,0.2)',borderRadius:8,padding:'12px',color:'#facc15',fontSize:12,fontFamily:'inherit',cursor:'pointer'}}>Regenerate Variations</button>
                   </div>
                 )}
               </div>
             )}
 
-            {/* LOADING STATES */}
-            {phase==='generating'&&<div style={{textAlign:'center',padding:32,background:'rgba(255,107,0,0.05)',borderRadius:12,border:'1px solid rgba(255,107,0,0.2)',marginTop:16}}><div style={{fontSize:24,marginBottom:12,animation:'spin 1s linear infinite',display:'inline-block'}}>◌</div><p style={{color:'#ff9500',fontSize:14,margin:0,letterSpacing:'0.08em'}}>Building your competitive advantage…</p></div>}
-
-            {/* GENERATE BUTTON */}
+            {phase==='generating'&&<div style={{textAlign:'center',padding:32,background:'rgba(255,107,0,0.05)',borderRadius:12,border:'1px solid rgba(255,107,0,0.2)',marginTop:16}}><div style={{fontSize:24,marginBottom:12,animation:'spin 1s linear infinite',display:'inline-block'}}>o</div><p style={{color:'#ff9500',fontSize:14,margin:0,letterSpacing:'0.08em'}}>Building your competitive advantage...</p></div>}
             {phase==='results'&&(
-              <button onClick={runGeneration} style={{background:'linear-gradient(135deg,#ff6b00,#ff9500)',border:'none',borderRadius:8,padding:'16px 28px',color:'#fff',fontSize:14,fontFamily:'inherit',letterSpacing:'0.08em',cursor:'pointer',fontWeight:600,width:'100%',boxShadow:'0 0 40px rgba(255,107,0,0.35)',marginTop:8}}>→ Generate Winning Hooks & Ad Copy</button>
+              <button onClick={runGeneration} style={{background:'linear-gradient(135deg,#ff6b00,#ff9500)',border:'none',borderRadius:8,padding:'16px 28px',color:'#fff',fontSize:14,fontFamily:'inherit',letterSpacing:'0.08em',cursor:'pointer',fontWeight:600,width:'100%',boxShadow:'0 0 40px rgba(255,107,0,0.35)',marginTop:8}}>Generate Winning Hooks and Ad Copy</button>
             )}
-
-            {/* SCORE BUTTON (only on analysis tab after generation) */}
             {hasGenerated&&activeTab==='analysis'&&!scores&&phase==='generated'&&(
-              <button onClick={runScoring} style={{background:'rgba(129,140,248,0.15)',border:'1px solid rgba(129,140,248,0.3)',borderRadius:8,padding:'12px 28px',color:'#818cf8',fontSize:13,fontFamily:'inherit',cursor:'pointer',width:'100%',marginTop:12}}>⊙ Score All Concepts</button>
+              <button onClick={runScoring} style={{background:'rgba(129,140,248,0.15)',border:'1px solid rgba(129,140,248,0.3)',borderRadius:8,padding:'12px 28px',color:'#818cf8',fontSize:13,fontFamily:'inherit',cursor:'pointer',width:'100%',marginTop:12}}>Score All Concepts</button>
             )}
-
-            <button onClick={reset} style={{background:'transparent',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'12px 24px',color:'#555',fontSize:13,fontFamily:'inherit',cursor:'pointer',width:'100%',marginTop:12,transition:'all .2s'}} onMouseEnter={e=>{e.target.style.borderColor='rgba(255,107,0,0.4)';e.target.style.color='#ff9500';}} onMouseLeave={e=>{e.target.style.borderColor='rgba(255,255,255,0.1)';e.target.style.color='#555';}}>← Run New Analysis</button>
+            <button onClick={reset} style={{background:'transparent',border:'1px solid rgba(255,255,255,0.1)',borderRadius:8,padding:'12px 24px',color:'#555',fontSize:13,fontFamily:'inherit',cursor:'pointer',width:'100%',marginTop:12,transition:'all .2s'}} onMouseEnter={function(e){e.target.style.borderColor='rgba(255,107,0,0.4)';e.target.style.color='#ff9500';}} onMouseLeave={function(e){e.target.style.borderColor='rgba(255,255,255,0.1)';e.target.style.color='#555';}}>Run New Analysis</button>
           </div>
         )}
       </div>
@@ -630,4 +501,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(<MetaAdsIntel/>);
 </script>
 </body>
 </html>
-
